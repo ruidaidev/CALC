@@ -1,3 +1,4 @@
+%% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                        AUTOLAND EVALUATION                              %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5,6 +6,7 @@
 addpath("L-GP Solver")
 
 clear all;
+close all;
 global ACSP
 initACSP;
 initALS;
@@ -31,11 +33,8 @@ ACStrim(flightpar);
 % [t,~,z]=sim('ALS');
 % nfig=1;
 % ALplots(t,z,nfig);
+%% SIMULATION #2 : Nominal Case with deterministic wind steps
 
-
-% ----------------------------------------------------------
-% SIMULATION #2 : Nominal Case with deterministic wind steps
-% ----------------------------------------------------------
 ACSP.TURBW.WindStepTime=[30 50 70];
 ACSP.TURBW.WindStepMag=[-8 5 1];
 [t,~,z, Ma, Fa]=sim('ALS_traj_test');
@@ -43,18 +42,14 @@ nfig=1;
 ALplots(t,z,nfig);
 nfig=5;
 aerodynamics_plots(t,z,Ma,Fa,nfig);
-nfig=8;
-[Fa, ~] = aero_calculation(z);
+nfig=5;
+[Fa, Ma] = aero_calculation(z, ACSP);
 aerodynamics_plots_calculations(t,z,Ma,Fa,nfig);
 
 
 
 
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% % ----------------------------------------------------------
-% % SIMULATION #3 : Nominal Case with turbulences & ILS noise
-% % ----------------------------------------------------------
+%% SIMULATION #3 : Nominal Case with turbulences & ILS noise
 % 
 % WX33=-30*0.5144; 
 % WY33=20*0.5144;   
@@ -103,57 +98,58 @@ aerodynamics_plots_calculations(t,z,Ma,Fa,nfig);
 % nfig=1;
 % ALplots(t,z,nfig);
 % 
-% 
-% % ----------------------------------------------------------
-% % SIMULATION #4 : Nominal Case with turbulences &  Windsteps
-% % ----------------------------------------------------------
-% WX33=-30*0.5144; 
-% WY33=20*0.5144; 
-% Vref=0.5144*max(119*sqrt(flightpar.MASS/140),118);
-% if WX33<0
-%     Vapp=Vref+max(2.572,-WX33/3);
-% else
-%     Vapp=Vref+2.572;
-% end;
-% 
-% clear flightpar
-% flightpar.MASS=150;
-% flightpar.XCG=21;
-% flightpar.VC=Vapp;
-% flightpar.WX=1.6*WX33; 
-% flightpar.altRWY=0;
-% flightpar.gamRWY=0;
-% flightpar.T0=15;
-% flightpar.Z=300;
-% flightpar.gamK=-3;
-% flightpar.gamGLD=-3;
-% flightpar.dZ=-30;
-% flightpar.dY=50;
-% 
-% ACStrim(flightpar);
-% 
-% ACSP.TURBW.WindStepTime=[30 50 70];
-% ACSP.TURBW.WindStepMag=[-10 15 1];
-% ACSP.TURBW.WX33=WX33;
-% ACSP.TURBW.WY33=WY33;
-% ACSP.TURBW.sigu=0.15*sqrt(WX33^2+WY33^2);
-% ACSP.TURBW.sigw=0.77;
-% ACSP.TURBW.seedwx=1;
-% ACSP.TURBW.seedwy=2;
-% ACSP.TURBW.seedwz=3;
-% ACSP.NOISE.devLOC=0;
-% ACSP.NOISE.sigLOC=0;
-% ACSP.NOISE.sigGLD=0;
-% ACSP.NOISE.seedLOC=4;
-% ACSP.NOISE.seedGLD=5;
-% 
-% [t,~,z]=sim('ALS');
-% nfig=1;
-% ALplots(t,z,nfig);
-% 
-% 
-% % ----------------------------------------------------------
-% % SIMULATION #5 : Max. Mass, with turbulences & ILS noise 
+%%  SIMULATION #4 : Nominal Case with turbulences &  Windsteps
+
+WX33=-30*0.5144; 
+WY33=20*0.5144; 
+Vref=0.5144*max(119*sqrt(flightpar.MASS/140),118);
+if WX33<0
+    Vapp=Vref+max(2.572,-WX33/3);
+else
+    Vapp=Vref+2.572;
+end;
+
+clear flightpar
+flightpar.MASS=150;
+flightpar.XCG=21;
+flightpar.VC=Vapp;
+flightpar.WX=1.6*WX33; 
+flightpar.altRWY=0;
+flightpar.gamRWY=0;
+flightpar.T0=15;
+flightpar.Z=300;
+flightpar.gamK=-3;
+flightpar.gamGLD=-3;
+flightpar.dZ=-30;
+flightpar.dY=50;
+
+ACStrim(flightpar);
+
+ACSP.TURBW.WindStepTime=[30 50 70];
+ACSP.TURBW.WindStepMag=[-10 15 1];
+ACSP.TURBW.WX33=WX33;
+ACSP.TURBW.WY33=WY33;
+ACSP.TURBW.sigu=0.15*sqrt(WX33^2+WY33^2);
+ACSP.TURBW.sigw=0.77;
+ACSP.TURBW.seedwx=1;
+ACSP.TURBW.seedwy=2;
+ACSP.TURBW.seedwz=3;
+ACSP.NOISE.devLOC=0;
+ACSP.NOISE.sigLOC=0;
+ACSP.NOISE.sigGLD=0;
+ACSP.NOISE.seedLOC=4;
+ACSP.NOISE.seedGLD=5;
+
+[t,~,z, Ma, Fa]=sim('ALS_traj_test');
+nfig=1;
+ALplots(t,z,nfig);
+nfig=5;
+aerodynamics_plots(t,z,Ma,Fa,nfig);
+nfig=5;
+[Fa, Ma] = aero_calculation(z, ACSP);
+aerodynamics_plots_calculations(t,z,Ma,Fa,nfig);
+
+%% SIMULATION #5 : Max. Mass, with turbulences & ILS noise 
 % %                 + descending runway
 % % ----------------------------------------------------------
 % 
